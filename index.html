@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alertas Meta Ads no WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: gestor pra gestor, direto, com cara de central de monitoramento do futuro.
+   IDEA: um radar que vigia as contas de anúncio e dispara o alerta pro celular.
+   PICTURE: radar vivo no fundo do topo, contas piscando, alerta voando pro celular; depois um celular fixo que muda com a rolagem.
+   COLOUR and TYPE: preto-esverdeado, verde neon como sinal de "tudo certo", vermelho pros problemas; Space Grotesk nos títulos, Inter no texto, JetBrains Mono no terminal.
+   LAYOUT: topo em tela cheia, vídeo, seção fixa que conta os alertas com a rolagem, terminal e fluxo que se desenham, linha do tempo das aulas, oferta. */
+:root{color-scheme:dark;--bg:#050807;--bg2:#0a100e;--card:rgba(18,28,24,.72);--line:rgba(80,255,160,.12);--ink:#eef6f2;--mute:#93a39b;--g:#3cff8f;--g2:#22c55e;--gd:#03110a;--r:#ff4d5e}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+#glow{position:fixed;width:600px;height:600px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(60,255,143,.08),transparent 60%);transform:translate(-50%,-50%);left:50%;top:30%}
+a{color:inherit}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h1{font-size:clamp(38px,6vw,76px);line-height:.98}
+h2{font-size:clamp(30px,4.2vw,52px);line-height:1.02;margin-bottom:16px}
+p{margin:0 0 14px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 max(5vw,18px);position:relative;z-index:1}
+.band{padding:clamp(70px,10vw,140px) 0;position:relative}
+.lead{font-size:clamp(17px,1.5vw,20px);color:var(--mute);max-width:600px}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:0 32px;border-radius:16px;background:var(--g);color:var(--gd);font-weight:800;font-size:18px;text-decoration:none;box-shadow:0 0 0 1px rgba(60,255,143,.5),0 12px 50px rgba(60,255,143,.35);transition:transform .2s,box-shadow .2s;overflow:hidden}
+.btn:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);animation:shine 3.2s infinite}
+@keyframes shine{60%,100%{transform:translateX(120%)}}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(60,255,143,.7),0 18px 60px rgba(60,255,143,.5)}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.chip{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--g);border:1px solid rgba(60,255,143,.3);background:rgba(60,255,143,.06);border-radius:999px;padding:7px 14px}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 12px var(--g);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.on{opacity:1;transform:none}
+header{position:fixed;top:0;left:0;right:0;z-index:20;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+header.solid{background:rgba(5,8,7,.75);backdrop-filter:blur(14px);border-color:var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font-family:"Space Grotesk";font-weight:700;font-size:18px;display:flex;align-items:center;gap:10px}
+.logo svg{filter:drop-shadow(0 0 8px var(--g))}
+header .btn{min-height:44px;font-size:15px;padding:0 20px}
+/* HERO */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
+#radar{position:absolute;inset:0;width:100%;height:100%}
+.hero:after{content:"";position:absolute;inset:auto 0 0;height:200px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center;padding-top:100px;padding-bottom:60px}
+.hero h1 .hl{background:linear-gradient(90deg,var(--g),#b6ffd6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{margin:22px 0 30px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:34px}
+.stats div{font-size:14px;color:var(--mute)}.stats b{display:block;font-family:"Space Grotesk";font-size:28px;color:var(--ink)}
+.phone{width:min(340px,100%);margin:0 auto;aspect-ratio:9/17.5;border-radius:46px;background:linear-gradient(160deg,#121c18,#070b0a);border:1px solid rgba(60,255,143,.25);box-shadow:0 0 0 8px #0b120f,0 40px 120px rgba(0,0,0,.7),0 0 140px rgba(60,255,143,.15);padding:20px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden;position:relative}
+.ptop{display:flex;align-items:center;gap:12px;padding:8px 6px 14px;border-bottom:1px solid var(--line)}
+.av{width:40px;height:40px;border-radius:50%;background:rgba(60,255,143,.1);border:1px solid rgba(60,255,143,.3);display:flex;align-items:center;justify-content:center}
+.ptop b{display:block;font-size:15px}.ptop small{color:var(--g);font-size:12px}
+.feed{display:flex;flex-direction:column;gap:10px}
+.msg{background:linear-gradient(160deg,rgba(60,255,143,.12),rgba(60,255,143,.03));border:1px solid rgba(60,255,143,.4);border-radius:16px;padding:11px 13px;font-size:13.5px;line-height:1.45;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+.msg b{display:block;font-size:14px}.msg .tm{float:right;font-size:11px;color:var(--mute)}
+.msg.bad{border-color:rgba(255,77,94,.5);background:linear-gradient(160deg,rgba(255,77,94,.12),rgba(255,77,94,.02))}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.95)}}
+/* VIDEO */
+.vframe{position:relative;max-width:1000px;margin:34px auto 0;border-radius:24px;padding:2px;background:conic-gradient(from var(--a,0deg),transparent 0 70%,var(--g) 85%,transparent 100%);animation:spin 5s linear infinite}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.vframe video{display:block;width:100%;border-radius:22px;background:#000;aspect-ratio:16/9}
+/* SCROLLY */
+.scrolly{position:relative;height:calc(100svh + 7 * 65svh)}
+.sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
+.sgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:50px;align-items:center;width:100%}
+.alist{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:6px}
+.alist li{cursor:pointer;display:flex;gap:14px;align-items:center;padding:12px 16px;border-radius:14px;color:#56655e;font-weight:600;font-size:clamp(15px,1.4vw,18px);transition:all .35s;border:1px solid transparent}
+.alist li .d{width:10px;height:10px;border-radius:50%;background:#2a3832;flex:none;transition:all .35s}
+.alist li.on{color:var(--ink);background:var(--card);border-color:var(--line)}
+.alist li.on .d{background:var(--r);box-shadow:0 0 14px var(--r)}
+.alist li.done .d{background:var(--g2)}
+.bar{height:3px;background:#16211c;border-radius:3px;margin-top:18px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--g);box-shadow:0 0 10px var(--g)}
+.big{position:relative;height:min(560px,70svh)}
+.bigcard{position:absolute;inset:0;margin:auto;height:fit-content;max-width:440px;border-radius:28px;padding:30px;background:var(--card);backdrop-filter:blur(10px);border:1px solid rgba(255,77,94,.35);box-shadow:0 0 100px rgba(255,77,94,.12);opacity:0;transform:translateY(40px) scale(.96);transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.bigcard.on{opacity:1;transform:none}
+.bigcard .ic{width:64px;height:64px;border-radius:18px;background:rgba(255,77,94,.12);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.bigcard h3{font-size:30px;margin-bottom:8px}
+.bigcard p{color:var(--mute)}
+.bigcard .wa{margin-top:20px;border-radius:16px;padding:14px 16px;background:rgba(60,255,143,.08);border:1px solid rgba(60,255,143,.35);font-size:14.5px}
+.bigcard .wa small{display:block;color:var(--g);font-weight:700;margin-bottom:4px;font-size:12px}
+/* TERMINAL + FLUXO */
+.term{border-radius:20px;background:#070c0a;border:1px solid var(--line);box-shadow:0 30px 90px rgba(0,0,0,.6);overflow:hidden}
+.term .tb{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
+.term .tb i{width:11px;height:11px;border-radius:50%;background:#263530}
+.term pre{margin:0;padding:22px;font:14px/1.65 "JetBrains Mono",monospace;color:#cfe9dc;white-space:pre-wrap;min-height:300px}
+.term .c{display:inline-block;width:9px;height:17px;background:var(--g);vertical-align:-3px;animation:blink 1s infinite}
+.term .ok{color:var(--g)}
+.flow{margin-top:60px}
+.flow svg{width:100%;height:auto;overflow:visible}
+.flow .ln{fill:none;stroke:var(--g);stroke-width:3;filter:drop-shadow(0 0 6px var(--g))}
+.flow .nd rect{fill:#0d1512;stroke:rgba(60,255,143,.4);stroke-width:1.5}
+.flow text{fill:var(--ink);font:600 17px "Space Grotesk"}.flow .s{fill:var(--mute);font:400 13px Inter}
+.pkt{fill:var(--g);filter:drop-shadow(0 0 8px var(--g))}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:50px;align-items:center}
+/* AULAS */
+.tl{position:relative;margin-top:40px;padding-left:46px}
+.tl:before{content:"";position:absolute;left:15px;top:6px;bottom:6px;width:2px;background:#16211c}
+.tl .fill{position:absolute;left:15px;top:6px;width:2px;height:0;background:var(--g);box-shadow:0 0 12px var(--g)}
+.ls{position:relative;padding:16px 0 26px}
+.ls:before{content:"";position:absolute;left:-38px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid #2a3832;transition:all .4s}
+.ls.lit:before{border-color:var(--g);background:var(--g);box-shadow:0 0 16px var(--g)}
+.ls .k{font:600 13px "JetBrains Mono";color:var(--g)}
+.ls h3{font-size:clamp(20px,2vw,26px);margin:4px 0}
+.ls p{color:var(--mute);margin:0;max-width:560px}
+.gifts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.gift{border-radius:20px;padding:22px;background:var(--card);border:1px solid var(--line)}
+.gift b{display:block;font-family:"Space Grotesk";font-size:20px;margin-bottom:4px}.gift span{color:var(--mute)}
+/* REQ */
+.req{border-radius:22px;background:var(--card);border:1px solid var(--line);padding:8px 24px}
+.req .row{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.req .row:last-child{border:0}.req .row span{color:var(--mute);text-align:right}
+ul.ck{list-style:none;padding:0;margin:16px 0 0}
+ul.ck li{padding:12px 0 12px 34px;position:relative;border-bottom:1px solid var(--line)}
+ul.ck li:before{content:"";position:absolute;left:4px;top:17px;width:16px;height:9px;border-left:3px solid var(--g);border-bottom:3px solid var(--g);transform:rotate(-45deg)}
+ul.no li:before{border:0;width:16px;height:3px;background:var(--r);transform:none;top:23px}
+/* OFERTA */
+.offer{max-width:580px;margin:0 auto;border-radius:30px;padding:2px;background:conic-gradient(from var(--a,0deg),rgba(60,255,143,.2),var(--g),rgba(60,255,143,.2),#b6ffd6,rgba(60,255,143,.2));animation:spin 6s linear infinite;transform-style:preserve-3d;transition:transform .15s}
+.offer>div{border-radius:28px;background:#08100d;padding:clamp(28px,5vw,46px);text-align:center}
+.price{font-family:"Space Grotesk";font-size:clamp(60px,10vw,88px);font-weight:700;line-height:1;margin:16px 0 4px;white-space:nowrap;text-shadow:0 0 40px rgba(60,255,143,.4)}
+.price small{font-size:22px;color:var(--mute);font-weight:500}
+.offer ul.ck{text-align:left;margin:24px 0 28px}
+.note{font-size:14px;color:var(--mute);margin-top:12px}
+details{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:700;font-size:18px;padding:20px 0;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:44px}
+summary:after{content:"+";color:var(--g);font-size:26px;font-weight:400;transition:transform .3s}
+details[open] summary:after{transform:rotate(45deg)}
+details p{color:var(--mute);padding-bottom:16px}
+footer{padding:40px 0;color:#5f6e67;font-size:14px;border-top:1px solid var(--line)}
+@media(max-width:900px){.hgrid,.two,.sgrid{grid-template-columns:minmax(0,1fr)}.hero .phone{max-width:300px}.big{height:330px}.bigcard{padding:22px}.bigcard h3{font-size:24px}.bigcard .ic{width:48px;height:48px;margin-bottom:12px}.sgrid{gap:18px}.alist{flex-direction:row;flex-wrap:wrap;gap:6px;margin-top:14px}.alist li{padding:6px 10px;font-size:13px}.alist li:not(.on){font-size:0;padding:6px;gap:0}.sticky .lead{display:none}.gifts{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){header .btn{display:none}.stats{gap:18px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="glow"></div>
+<header id="hd"><div class="wrap"><div class="logo"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3cff8f" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-6"/></svg>Alertas Meta Ads</div><a class="btn" href="#oferta">Quero os alertas</a></div></header>
+
+<section class="hero">
+  <canvas id="radar" aria-hidden="true"></canvas>
+  <div class="wrap hgrid">
+    <div>
+      <span class="chip"><i></i>Vigiando suas contas de hora em hora</span>
+      <h1 style="margin-top:22px">Saiba que a conta parou <span class="hl">antes do cliente te avisar.</span></h1>
+      <p class="lead">Monte com o Claude, sem programar, uma automação que vigia suas contas de Meta Ads e manda o alerta no seu WhatsApp quando algo dá errado.</p>
+      <a class="btn" href="#oferta">Quero montar os meus alertas</a>
+      <div class="stats"><div><b>7</b>tipos de alerta</div><div><b>12x</b>por dia, de seg a sáb</div><div><b>0</b>linhas de código</div></div>
+    </div>
+    <div class="phone" aria-label="Alertas chegando no WhatsApp">
+      <div class="ptop"><div class="av"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3cff8f" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21h4"/></svg></div><div><b>Alertas Meta Ads</b><small>● online</small></div></div>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" style="padding-top:20px">
+  <div class="wrap" style="text-align:center">
+    <h2 class="reveal">Veja a primeira aula</h2>
+    <p class="lead reveal" style="margin:0 auto">Em menos de um minuto você entende o que vai ter funcionando.</p>
+    <div class="vframe reveal"><video src="aula1.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video></div>
+  </div>
+</section>
+
+<section class="scrolly" id="scrolly">
+  <div class="sticky"><div class="wrap sgrid">
+    <div>
+      <span class="chip"><i></i>O que o radar pega</span>
+      <h2 style="margin-top:18px">7 problemas que custam cliente</h2>
+      <p class="lead">Role a página e veja cada um virar uma mensagem no seu WhatsApp.</p>
+      <ul class="alist" id="alist"></ul>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+    <div class="big" id="big"></div>
+  </div></div>
+</section>
+
+<section class="band">
+  <div class="wrap two">
+    <div class="reveal">
+      <span class="chip"><i></i>Como funciona</span>
+      <h2 style="margin-top:18px">Você cola o prompt. O Claude monta o resto.</h2>
+      <p class="lead">Cada aula traz o texto pronto. O Claude cria a automação no seu n8n e te guia tela por tela, em palavras simples.</p>
+    </div>
+    <div class="term reveal" id="term"><div class="tb"><i></i><i></i><i></i><span style="margin-left:10px">Claude Code</span></div><pre id="tx"></pre></div>
+  </div>
+  <div class="wrap flow" id="flow">
+    <svg viewBox="0 0 1100 170" role="img" aria-label="Fluxo: Claude, n8n, Meta Ads, WhatsApp">
+      <path id="fpath" class="ln" d="M150 85 H950"/>
+      <g class="nd"><rect x="30" y="35" width="220" height="100" rx="18"/><text x="140" y="80" text-anchor="middle">Claude</text><text class="s" x="140" y="105" text-anchor="middle">monta o fluxo</text></g>
+      <g class="nd"><rect x="310" y="35" width="220" height="100" rx="18"/><text x="420" y="80" text-anchor="middle">n8n</text><text class="s" x="420" y="105" text-anchor="middle">roda sozinho</text></g>
+      <g class="nd"><rect x="590" y="35" width="220" height="100" rx="18"/><text x="700" y="80" text-anchor="middle">Meta Ads</text><text class="s" x="700" y="105" text-anchor="middle">lê suas contas</text></g>
+      <g class="nd"><rect x="870" y="35" width="220" height="100" rx="18"/><text x="980" y="80" text-anchor="middle">WhatsApp</text><text class="s" x="980" y="105" text-anchor="middle">o alerta chega</text></g>
+      <circle class="pkt" id="pkt" r="7" cx="150" cy="85"/>
+    </svg>
+  </div>
+</section>
+
+<section class="band" style="background:linear-gradient(var(--bg),var(--bg2),var(--bg))">
+  <div class="wrap">
+    <h2 class="reveal">O que você recebe</h2>
+    <p class="lead reveal">7 aulas curtas, direto ao ponto. Você assiste, copia o prompt e faz junto.</p>
+    <div class="tl" id="tl"><div class="fill" id="tlfill"></div></div>
+    <div class="gifts">
+      <div class="gift reveal"><b>Todos os prompts prontos</b><span>Pra copiar e colar, na ordem das aulas.</span></div>
+      <div class="gift reveal"><b>Fluxo pronto de reserva</b><span>Travou? Importa o fluxo pronto no n8n e segue.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap two" style="align-items:start">
+    <div class="reveal">
+      <h2>O que você precisa ter</h2>
+      <p class="lead">Sendo transparente: além do curso, a automação usa estas ferramentas. Algumas são pagas.</p>
+      <div class="req">
+        <div class="row"><b>Claude com Claude Code</b><span>plano pago, a partir do Pro</span></div>
+        <div class="row"><b>n8n</b><span>na nuvem (tem teste grátis) ou no seu servidor</span></div>
+        <div class="row"><b>WhatsApp por API</b><span>Evolution API ou similar</span></div>
+        <div class="row"><b>Admin no gerenciador de negócios</b><span>pra gerar o token da Meta</span></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <h2>Pra quem é</h2>
+      <ul class="ck"><li>Gestor de tráfego que cuida de várias contas de Meta Ads</li><li>Agência que quer parar de descobrir problema pelo cliente</li><li>Quem nunca programou e quer automação funcionando</li></ul>
+      <h3 style="margin-top:34px;font-size:26px">Não é pra você se</h3>
+      <ul class="ck no"><li>Você quer mensagem automática nos grupos dos clientes. O alerta vai pro gestor, não pro grupo.</li><li>Você anuncia só no Google Ads. Este curso é de Meta Ads.</li></ul>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="oferta">
+  <div class="wrap">
+    <div class="offer reveal" id="offer"><div>
+      <span class="chip"><i></i>Acesso imediato</span>
+      <h2 style="margin-top:18px;font-size:clamp(28px,3.4vw,40px)">Alertas Meta Ads no WhatsApp</h2>
+      <div class="price">R$ 97<small> à vista</small></div>
+      <ul class="ck"><li>7 videoaulas curtas</li><li>Prompts prontos pra copiar e colar</li><li>Fluxo pronto pra importar no n8n</li><li>Alertas no WhatsApp de hora em hora</li></ul>
+      <a class="btn" id="checkout" href="#oferta" style="width:100%">Comprar agora</a>
+      <p class="note">Pagamento seguro pela Kirvano · Pix ou cartão</p>
+    </div></div>
+  </div>
+</section>
+
+<section class="band" style="padding-top:20px">
+  <div class="wrap" style="max-width:840px">
+    <h2 class="reveal">Perguntas frequentes</h2>
+    <details><summary>Preciso saber programar?</summary><p>Não. Você copia os prompts das aulas e o Claude faz a parte técnica, explicando cada etapa em palavras simples.</p></details>
+    <details><summary>Os alertas vão pro grupo do cliente?</summary><p>Não. Eles chegam no seu WhatsApp ou no do gestor de cada conta. Mensagem automática em grupo aumenta o risco de bloqueio do número, então o gestor recebe, resolve e avisa o cliente se precisar.</p></details>
+    <details><summary>Quanto custam as ferramentas?</summary><p>O Claude com Claude Code exige plano pago, a partir do Pro. O n8n tem teste grátis na nuvem ou roda no seu servidor. O WhatsApp por API depende da opção que você escolher. Confira os preços atuais no site de cada ferramenta.</p></details>
+    <details><summary>Funciona com quantas contas?</summary><p>Quantas você quiser. Cada conta tem o WhatsApp de quem recebe o alerta.</p></details>
+    <details><summary>E se eu travar no meio?</summary><p>Cole o erro no Claude e peça explicação. E você tem o fluxo pronto pra importar no n8n como reserva.</p></details>
+    <details><summary>Como recebo o acesso?</summary><p>Logo depois da compra, pela área de membros da Kirvano.</p></details>
+  </div>
+</section>
+<footer><div class="wrap">Alertas Meta Ads no WhatsApp · Nomes de clientes e valores desta página são ilustrativos.</div></footer>
+
+<script>
+{
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=s=>document.querySelector(s);
+/* cabeçalho e brilho do cursor */
+const hd=$('#hd');addEventListener('scroll',()=>hd.classList.toggle('solid',scrollY>40),{passive:true});
+const gl=$('#glow');addEventListener('pointermove',e=>{gl.style.left=e.clientX+'px';gl.style.top=e.clientY+'px'},{passive:true});
+/* aparecer ao rolar */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* RADAR */
+const cv=$('#radar'),cx=cv.getContext('2d');let W,H,DPR=Math.min(devicePixelRatio||1,2);
+const names=['Auto Center Sul','Clínica Sorriso','Loja Bella','Pizzaria Forno','Studio Fit','Ótica Visão','Pet Shop Amigo','Hamburgueria 77','Imobiliária Lar','Estética Bella','Academia Pulse','Doceria Mel'];
+let nodes=[];
+function sizeR(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;cx.setTransform(DPR,0,0,DPR,0,0);
+  const cxp=W*(W>900?.68:.5),cyp=H*.5;nodes=names.map((n,i)=>{const a=i/names.length*Math.PI*2+.3,r=(.25+((i*37)%10)/22)*Math.min(W,H)*.7;return{n,x:cxp+Math.cos(a)*r,y:cyp+Math.sin(a)*r*.75,a:(a+Math.PI*2)%(Math.PI*2),hit:0,bad:false}});}
+const ro=new ResizeObserver(sizeR);ro.observe(cv);sizeR();
+let ang=0,last=performance.now();
+function drawR(t){if(!W||!H){requestAnimationFrame(drawR);return}const dt=Math.min(.1,Math.max(0,(t-last)/1000));last=t;ang=(ang+dt*.9)%(Math.PI*2);
+  cx.clearRect(0,0,W,H);const ox=W*(W>900?.68:.5),oy=H*.5,R=Math.max(W,H)*.75;
+  cx.strokeStyle='rgba(60,255,143,.07)';cx.lineWidth=1;
+  for(let r=120;r<R;r+=120){cx.beginPath();cx.ellipse(ox,oy,r,r*.75,0,0,Math.PI*2);cx.stroke()}
+  cx.beginPath();cx.moveTo(ox-R,oy);cx.lineTo(ox+R,oy);cx.moveTo(ox,oy-R);cx.lineTo(ox,oy+R);cx.stroke();
+  const g=cx.createConicGradient?cx.createConicGradient(ang-.6,ox,oy):null;
+  if(g){g.addColorStop(0,'rgba(60,255,143,0)');g.addColorStop(.09,'rgba(60,255,143,.16)');g.addColorStop(.1,'rgba(60,255,143,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(ox,oy,R,R*.75,0,0,Math.PI*2);cx.fill()}
+  nodes.forEach(nd=>{let d=(ang-nd.a+Math.PI*2)%(Math.PI*2);if(d<.05&&t-nd.hit>1500){nd.hit=t;nd.bad=Math.random()<.22;if(nd.bad)pushAlert(nd.n)}
+    const age=(t-nd.hit)/1000,pulse=Math.max(0,1-age/1.6);const col=nd.bad&&age<3?'255,77,94':'60,255,143';
+    cx.fillStyle=`rgba(${col},${.35+pulse*.65})`;cx.beginPath();cx.arc(nd.x,nd.y,3.5+pulse*3,0,7);cx.fill();
+    if(pulse>0){cx.strokeStyle=`rgba(${col},${pulse*.6})`;cx.beginPath();cx.arc(nd.x,nd.y,6+age*26,0,7);cx.stroke()}
+    if(W>700){cx.fillStyle=`rgba(${col},${.25+pulse*.6})`;cx.font='12px Inter';cx.fillText(nd.n,nd.x+10,nd.y+4)}});
+  if(!RM)requestAnimationFrame(drawR)}
+requestAnimationFrame(drawR);
+
+/* feed do celular */
+const issues=[['Saldo baixo: R$ 18,40. Coloque crédito pra conta não parar.'],['Gastou R$ 96,00 em 3 dias sem nenhum resultado.'],['1 anúncio reprovado.'],['Conta com pagamento pendente.'],['Custo por resultado subiu: R$ 14,20 (o normal é R$ 8,90).'],['Conta não gastou nada hoje.']];
+const feed=$('#feed');let ic=0,lastPush=0;
+function pushAlert(n){const now=performance.now();if(now-lastPush<2200)return;lastPush=now;
+  const d=document.createElement('div');d.className='msg'+(ic%3===1?' bad':'');const h=new Date();
+  d.innerHTML=`<span class="tm">${String(h.getHours()).padStart(2,'0')}:${String(h.getMinutes()).padStart(2,'0')}</span><b>${n}</b>${issues[ic++%issues.length][0]}`;
+  feed.prepend(d);while(feed.children.length>5)feed.lastChild.remove()}
+['Auto Center Sul','Pizzaria Forno','Studio Fit'].forEach((n,i)=>setTimeout(()=>{lastPush=0;pushAlert(n)},300+i*700));
+setInterval(()=>{if(performance.now()-lastPush>4000)pushAlert(names[Math.floor(Math.random()*names.length)])},1000);
+if(RM){pushAlert('Studio Fit')}
+
+/* SCROLLY */
+const AL=[
+ ['Conta desativada','A conta foi desativada ou está com pagamento pendente. Os anúncios saíram do ar.','Loja Bella','Conta com pagamento pendente.','<circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/>'],
+ ['Saldo acabando','O saldo pré-pago chegou em R$ 30 ou menos. Você escolhe o valor.','Auto Center Sul','Saldo baixo: R$ 18,40. Coloque crédito.','<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>'],
+ ['Limite de gastos','A conta já usou 95% do limite de gastos e vai parar.','Ótica Visão','Usou 96% do limite. Falta R$ 42,00.','<path d="M4 20h16"/><path d="M6 16V8M12 16V4M18 16v-5"/>'],
+ ['Conta parou','Depois das 11h, a conta não gastou nada hoje, mas ontem gastou.','Studio Fit','Não gastou nada hoje (ontem: R$ 64,00).','<path d="M9 5v14M15 5v14"/>'],
+ ['Gasto sem resultado','R$ 80 ou mais em 3 dias sem nenhuma conversa, lead ou compra.','Pizzaria Forno','Gastou R$ 96,00 em 3 dias sem resultado.','<path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/>'],
+ ['Custo disparou','O custo por resultado ficou 50% acima da média da própria conta.','Clínica Sorriso','Custo por resultado: R$ 14,20 (normal: R$ 8,90).','<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>'],
+ ['Anúncio reprovado','Um anúncio caiu na revisão. O alerta vem com o nome dele.','Academia Pulse','1 anúncio reprovado: Promo Janeiro.','<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9l6 6M15 9l-6 6"/>']];
+$('#alist').innerHTML=AL.map(a=>`<li><span class="d"></span>${a[0]}</li>`).join('');
+$('#big').innerHTML=AL.map(a=>`<div class="bigcard"><div class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ff4d5e" stroke-width="2.2">${a[4]}</svg></div><h3>${a[0]}</h3><p>${a[1]}</p><div class="wa"><small>WHATSAPP · AGORA</small><b>${a[2]}</b><br>${a[3]}</div></div>`).join('');
+const lis=[...document.querySelectorAll('#alist li')],cards=[...document.querySelectorAll('.bigcard')],bar=$('#bar'),sc=$('#scrolly');
+let cur=-1;function setA(i){if(i===cur)return;cur=i;lis.forEach((l,k)=>{l.classList.toggle('on',k===i);l.classList.toggle('done',k<i)});cards.forEach((c,k)=>c.classList.toggle('on',k===i))}
+setA(0);
+/* terminal */
+const TXT='> Monte no meu n8n um fluxo chamado "Alertas Meta Ads".\n  Roda de hora em hora e me avisa no WhatsApp quando\n  uma conta tiver problema...\n\n';
+const OUT='● Criando o fluxo no seu n8n...\n● Conectando na API da Meta...\n● Configurando o envio no WhatsApp...\n\n✓ Pronto! Fluxo "Alertas Meta Ads" criado.\n  Falta só o token da Meta. Vamos pra próxima etapa?';
+const tx=$('#tx');let typed=false;
+new IntersectionObserver((es,o)=>{if(es[0].isIntersecting&&!typed){typed=true;o.disconnect();let i=0;const all=TXT+OUT;
+  const step=()=>{i+=i<TXT.length?2:4;const s=all.slice(0,i);tx.innerHTML=s.replace(/✓[^\n]*/,m=>`<span class="ok">${m}</span>`)+'<span class="c"></span>';if(i<all.length&&!RM)setTimeout(step,i<TXT.length?28:22);else tx.innerHTML=all.replace(/✓[^\n]*/,m=>`<span class="ok">${m}</span>`)+'<span class="c"></span>'};step()}},{threshold:.4}).observe($('#term'));
+/* aulas */
+const AU=[['O que você vai ter funcionando','Os 7 alertas e o resultado final no WhatsApp.'],['Preparando o Claude','Conta, plano e a aba Code.'],['Conectando o Claude ao seu n8n','A ponte MCP, em poucos cliques.'],['O prompt que monta os alertas','Um prompt e o fluxo inteiro aparece no seu n8n.'],['O token da Meta','O passo a passo do usuário do sistema, sem erro.'],['Conectando o WhatsApp','Os 3 dados da sua API e pronto.'],['Testar e ligar','O primeiro alerta chegando de verdade.']];
+$('#tl').insertAdjacentHTML('beforeend',AU.map((a,i)=>`<div class="ls"><div class="k">AULA ${i+1}</div><h3>${a[0]}</h3><p>${a[1]}</p></div>`).join(''));
+const lsEls=[...document.querySelectorAll('.ls')],tl=$('#tl'),tlf=$('#tlfill');
+/* fluxo */
+const fp=$('#fpath'),pk=$('#pkt'),flow=$('#flow');const FL=fp.getTotalLength();fp.style.strokeDasharray=FL;fp.style.strokeDashoffset=FL;
+/* oferta com inclinação */
+const of=$('#offer');of.addEventListener('pointermove',e=>{if(RM)return;const r=of.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;of.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`});
+of.addEventListener('pointerleave',()=>of.style.transform='');
+/* alertas seguem a rolagem: lê a posição da seção a cada quadro */
+lis.forEach((l,k)=>l.addEventListener('click',()=>{const r=sc.getBoundingClientRect();const tot=r.height-innerHeight;scrollBy({top:r.top+tot*(k+.5)/AL.length,behavior:'smooth'})}));
+function tick(){const r=sc.getBoundingClientRect();const tot=r.height-innerHeight;const p=Math.min(.9999,Math.max(0,-r.top/tot));setA(Math.floor(p*AL.length));bar.style.width=(p*100)+'%';requestAnimationFrame(tick)}
+requestAnimationFrame(tick);
+/* fluxo se desenha quando aparece na tela */
+let fStart=0;new IntersectionObserver(es=>{if(es[0].isIntersecting&&!fStart)fStart=performance.now()},{threshold:.4}).observe(flow);
+function fl(t){if(fStart){const p=Math.min(1,(t-fStart)/2200);fp.style.strokeDashoffset=FL*(1-p);const q=((t-fStart)/2200)%1;const pt=fp.getPointAtLength(FL*(p<1?p:q));pk.setAttribute('cx',pt.x);pk.setAttribute('cy',pt.y)}requestAnimationFrame(fl)}
+requestAnimationFrame(fl);
+/* aulas acendem quando aparecem */
+let litN=0;const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target.classList.contains('lit')){e.target.classList.add('lit');litN++;const last=lsEls.filter(l=>l.classList.contains('lit')).pop();tlf.style.transition='height .6s';tlf.style.height=(last.offsetTop+20)+'px'}}),{threshold:.6});
+lsEls.forEach(l=>io2.observe(l));
+}
+</script>
+</body>
+</html>
