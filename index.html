@@ -124,6 +124,14 @@ ul.no li:before{border:0;width:16px;height:3px;background:var(--r);transform:non
 .offer>div{border-radius:28px;background:#08100d;padding:clamp(28px,5vw,46px);text-align:center}
 .price{font-family:"Space Grotesk";font-size:clamp(60px,10vw,88px);font-weight:700;line-height:1;margin:16px 0 4px;white-space:nowrap;text-shadow:0 0 40px rgba(60,255,143,.4)}
 .price small{font-size:22px;color:var(--mute);font-weight:500}
+.bump{max-width:580px;margin:22px auto 0;border:1.5px dashed rgba(60,255,143,.55);border-radius:24px;padding:26px 28px;background:rgba(60,255,143,.04);display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;text-align:left}
+.bump .ic{width:52px;height:52px;border-radius:14px;background:rgba(60,255,143,.12);border:1px solid rgba(60,255,143,.4);display:flex;align-items:center;justify-content:center;font-size:24px}
+.bump h3{font-size:21px;margin:0 0 6px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.bump h3 b{font-family:"Space Grotesk";color:var(--g);white-space:nowrap}
+.bump p{margin:0;color:var(--mute);font-size:15.5px;line-height:1.55}
+.bump ul{margin:12px 0 0;padding:0;list-style:none;font-size:15px;line-height:1.7}
+.bump ul li::before{content:"✓ ";color:var(--g);font-weight:700}
+.bump .how{margin-top:14px;font-size:13.5px;color:var(--mute);border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
 .offer ul.ck{text-align:left;margin:24px 0 28px}
 .note{font-size:14px;color:var(--mute);margin-top:12px}
 details{border-bottom:1px solid var(--line)}
@@ -133,7 +141,7 @@ details[open] summary:after{transform:rotate(45deg)}
 details p{color:var(--mute);padding-bottom:16px}
 footer{padding:40px 0;color:#5f6e67;font-size:14px;border-top:1px solid var(--line)}
 @media(max-width:900px){.hgrid,.two,.sgrid{grid-template-columns:minmax(0,1fr)}.hero .phone{max-width:300px}.big{height:330px}.bigcard{padding:22px}.bigcard h3{font-size:24px}.bigcard .ic{width:48px;height:48px;margin-bottom:12px}.sgrid{gap:18px}.alist{flex-direction:row;flex-wrap:wrap;gap:6px;margin-top:14px}.alist li{padding:6px 10px;font-size:13px}.alist li:not(.on){font-size:0;padding:6px;gap:0}.sticky .lead{display:none}.gifts{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:600px){header .btn{display:none}.stats{gap:18px}}
+@media(max-width:600px){.bump{grid-template-columns:1fr;padding:22px}header .btn{display:none}.stats{gap:18px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -243,6 +251,12 @@ footer{padding:40px 0;color:#5f6e67;font-size:14px;border-top:1px solid var(--li
       <a class="btn" id="checkout" href="https://pay.kirvano.com/fa14f9a8-1e64-477b-8612-7b50efa14473" style="width:100%">Comprar agora</a>
       <p class="note">Pagamento seguro pela Kirvano · Pix ou cartão</p>
     </div></div>
+    <div class="bump reveal"><div class="ic">💸</div><div>
+      <h3>Complemento: Cobrança e Check-in <b>+ R$ 37</b></h3>
+      <p>Usa o mesmo WhatsApp dos alertas pra cuidar de duas tarefas que sempre ficam pra depois.</p>
+      <ul><li>Lembrete de pagamento 2 dias antes, no dia e 3 dias depois do vencimento</li><li>Para sozinho quando você marca o cliente como pago na planilha</li><li>Convite pro check-in quinzenal de resultados com cada cliente</li><li>3 aulas curtas e 3 prompts prontos</li></ul>
+      <div class="how">Opcional. Aparece na página de pagamento: é só marcar a caixinha antes de finalizar.</div>
+    </div></div>
   </div>
 </section>
 
@@ -254,6 +268,7 @@ footer{padding:40px 0;color:#5f6e67;font-size:14px;border-top:1px solid var(--li
     <details><summary>Quanto custam as ferramentas?</summary><p>O Claude com Claude Code exige plano pago, a partir do Pro. O n8n tem teste grátis na nuvem ou roda no seu servidor. O WhatsApp por API depende da opção que você escolher. Confira os preços atuais no site de cada ferramenta.</p></details>
     <details><summary>Funciona com quantas contas?</summary><p>Quantas você quiser. Cada conta tem o WhatsApp de quem recebe o alerta.</p></details>
     <details><summary>E se eu travar no meio?</summary><p>Cole o erro no Claude e peça explicação. E você tem o fluxo pronto pra importar no n8n como reserva.</p></details>
+    <details><summary>O que é o check-in do complemento?</summary><p>É uma reunião rápida, a cada 15 dias, em que você mostra pro cliente os resultados das campanhas, o que foi feito e os próximos passos. O complemento manda o convite pra agendar automaticamente, pelo WhatsApp de cada cliente, nunca em grupo.</p></details>
     <details><summary>Como recebo o acesso?</summary><p>Logo depois da compra, pela área de membros da Kirvano.</p></details>
   </div>
 </section>
